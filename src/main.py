@@ -35,12 +35,13 @@ class VKPost:
             
         return best_size['url']
     
-    def __extract_attachments(self):
+    def extract_attachments(self):
         attachments = {'photos': [],
                        'videos': [],
                        'audios': [],
                        'docs': [],
-                       'poll': {}}
+                       'poll': {},
+                       'link': {}}
 
         for attachment in self.post_object['attachments']:
             match attachment['type']:
@@ -57,12 +58,24 @@ class VKPost:
                     attachments['docs'].append(attachment['doc']['url'])
                 case 'poll':
                     poll_question = attachment['poll']['question']
-                    is_anonymous = True if attachment['poll']['question'] == 'true' else False
+                    is_anonymous = True if attachment['poll']['anonymous'] == 'true' else False
                     poll_answers = [answer['text'] for answer in attachment['poll']['answers']]
                     
                     attachments['poll'] = {'poll_question': poll_question,
                                            'is_anonymous': is_anonymous,
                                            'answers': poll_answers}
+                case 'link':
+                    match attachment['link']['description']:
+                        case 'Playlist':
+                            attachments['link'] = {'type': 'Playlist',
+                                                   'title': attachment['link']['title'],
+                                                   'url': attachment['link']['url']}
+                        case 'Article':
+                            article_photo_url = self.__get_photo_max_size(attachment['link']['photo'])
+                            attachments['link'] = {'type': 'Article',
+                                                   'title': attachment['link']['title'],
+                                                   'url': attachment['link']['url'],
+                                                   'photo_url': article_photo_url}
         return attachments
     
     def convert_to_telegram_post(self):
@@ -86,11 +99,10 @@ async def main(delay=5):
         vk_posts = await get_vk_last_posts()
 
         for post in vk_posts['response']['items']:
-            vk_post = VKPost(post)
+            vk_post = VKPost(post).extract_attachments()
+            print(vk_post)
 
-        print(vk_posts)
-
-        await asyncio.sleep(delay)
+        break#await asyncio.sleep(delay)
 
 
 if __name__ == '__main__':
