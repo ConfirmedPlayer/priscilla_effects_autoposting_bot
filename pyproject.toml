@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "priscilla-effects-autoposting-bot"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "priscilla_effects_autoposting_bot"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiohttp = {extras = ["speedups"], version = "^3.8.4"}
+flake8 = "^6.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
