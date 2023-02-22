@@ -11,6 +11,8 @@ packages = [{include = "priscilla_effects_autoposting_bot"}]
 python = "^3.11"
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 flake8 = "^6.0.0"
+aiofiles = "^23.1.0"
+pyrogram = "^2.0.99"
 
 
 [build-system]
